@@ -1,0 +1,57 @@
+#root {
+  max-width: 1280px;
+  margin: 0 auto;
+  padding: 2rem;
+  text-align: center;
+  background-color: white;
+  color: black;
+  text-align: start;
+}
+
+.calendar {
+  display: grid;
+  grid-template-columns: repeat(16, 1fr);
+}
+
+.year {
+  font-size: 1.25rem;
+  text-align: center;
+}
+
+.cell {
+  box-sizing: content-box;
+  outline: 1px solid black;
+  padding: 0.4rem;
+  width: 4rem;
+  height: 4rem;
+}
+
+.month-0,
+.month-3,
+.month-6,
+.month-9,
+.month-12 {
+  background-color: #ffe5e5;
+}
+
+.month-1,
+.month-4,
+.month-7,
+.month-10 {
+  background-color: #e5ffe5;
+}
+
+.month-2,
+.month-5,
+.month-8,
+.month-11 {
+  background-color: #e5e5ff;
+}
+
+.month-text {
+  font-weight: bold;
+  color: lightgray;
+  font-size: 2rem;
+  overflow: visible;
+  position: relative;
+}
