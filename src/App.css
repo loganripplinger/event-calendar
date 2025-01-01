@@ -14,12 +14,12 @@
 
 .calendar {
   display: grid;
-  grid-template-columns: repeat(16, 1fr);
+  grid-template-columns: repeat(14, 1fr);
 }
 
 .calendar-events {
   display: grid;
-  grid-template-columns: repeat(16, 1fr);
+  grid-template-columns: repeat(14, 1fr);
   position: absolute;
   top: 1.8rem;
   left: 0;
@@ -76,11 +76,13 @@
 }
 .event-text {
   text-align: center;
-  white-space: nowrap; /* Prevent text from wrapping */
+  white-space: nowrap;
   position: absolute;
-  transform: translateX(-50%);
   overflow: visible;
   font-weight: bolder;
+}
+.event-text-offset {
+  transform: translateX(60%);
 }
 .line {
   border-top: 1px solid black;

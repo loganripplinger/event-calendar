@@ -1,5 +1,7 @@
 import "./App.css";
 
+const year = new Date().getUTCFullYear();
+
 function daysinmonth(year: number, month: number): number {
   return new Date(year, month + 1, 0).getDate();
 }
@@ -8,7 +10,7 @@ function Year() {
   return (
     <div className="cell year">
       <div>20</div>
-      <div>24</div>
+      <div>25</div>
     </div>
   );
 }
@@ -18,7 +20,7 @@ function Empty({ hidden }: { hidden?: boolean }) {
 }
 
 function Day({ day, month }: { day: number; month: number }) {
-  const date = new Date(2024, month, day);
+  const date = new Date(year, month, day);
   const isWeekend = date.getDay() === 0 || date.getDay() === 6;
 
   const monthText =
@@ -38,18 +40,12 @@ function Day({ day, month }: { day: number; month: number }) {
   );
 }
 
-function Event({
-  text,
-  start,
-  end,
-}: {
-  text: string;
-  start: boolean;
-  end: boolean;
-}) {
+function Event({ text, offset, start, end }: Event) {
   return (
     <div className="cell event">
-      <div className="event-text">{text ? text : "\u00A0"}</div>
+      <div className={`event-text ${offset ? "" : "event-text-offset"}`}>
+        {text ? text : "\u00A0"}
+      </div>
       <div
         className={`line${start ? " line-start" : ""}${end ? " line-end" : ""}`}
       />
@@ -57,11 +53,22 @@ function Event({
   );
 }
 
-const input = "New York: April 1 to April 15";
+const input = `
+Japan: January 1 to January 15
+DayLight bug free: March 4 to March 11
+one: Apr 1 to April 1
+two: Apr 15 to April 16
+three: Apr 28 to April 30
+four: may 11 to may 14
+fourasdfasdfanda: may 25 to may 28 
+between months: August 31 to September 4
+two lines: Feb 8 to Feb 23
+fourasdfasdfanda: January 31 to Feburary 3
+`;
 
 type Day = { id: number; month: number; day: number };
 type EventDefinition = { start: number; end: number; text: string };
-type Event = { text: string; start: boolean; end: boolean };
+type Event = { text: string; offset: boolean; start: boolean; end: boolean };
 
 const parseInput = (inputRaw: string): EventDefinition[] => {
   const inputs = inputRaw
@@ -78,31 +85,35 @@ const parseInput = (inputRaw: string): EventDefinition[] => {
   const res: EventDefinition[] = [];
 
   const convertStringToDate = (monthDayString: string) => {
-    const currentYear = new Date().getFullYear();
-    return new Date(`${monthDayString} ${currentYear}`);
+    const currentYear = new Date().getUTCFullYear();
+    const [month, day] = monthDayString.split(" ");
+    const monthIndex = new Date(`${month} 1 ${currentYear} `).getMonth();
+    const date = new Date(Date.UTC(currentYear, monthIndex, parseInt(day, 10)));
+
+    if (isNaN(date.getTime())) {
+      throw new Error(`Invalid date: ${monthDayString} `);
+    }
+    return date;
   };
 
   const getNumberDayOfYear = (date: Date): number => {
-    const currentYear = new Date().getFullYear();
-    if (isNaN(date.getTime())) {
-      throw new Error("Invalid date");
-    }
-    const startOfYear = new Date(currentYear, 0, 1); // January 1st
-    if (isNaN(startOfYear.getTime())) {
-      throw new Error("Invalid start of year");
-    }
+    const currentYear = date.getUTCFullYear();
+    const startOfYear = new Date(Date.UTC(currentYear, 0, 1)); // January 1st in UTC
+
     const dayOfYear =
       Math.floor(
         (date.getTime() - startOfYear.getTime()) / (1000 * 60 * 60 * 24)
       ) + 1;
-    return dayOfYear + 1;
+    return dayOfYear;
   };
 
   for (const input of inputs!) {
     if (!input) continue;
     const [text, startDate, endDate] = input;
-    const start = getNumberDayOfYear(convertStringToDate(startDate));
-    const end = getNumberDayOfYear(convertStringToDate(endDate));
+    const startNumber = convertStringToDate(startDate);
+    const start = getNumberDayOfYear(startNumber);
+    const endNumber = convertStringToDate(endDate);
+    const end = getNumberDayOfYear(endNumber);
 
     res.push({ text, start, end });
   }
@@ -118,42 +129,59 @@ function App() {
   // create days
   let id = 0; // id will match the index in timeline
   for (let month = 0; month < 12; month++) {
-    const daysInMonth = daysinmonth(2024, month);
+    const daysInMonth = daysinmonth(year, month);
     for (let day = 1; day <= daysInMonth; day++) {
-      timeline.push([{ id, month, day }]);
+      const date = new Date(Date.UTC(year, month, day));
+      timeline.push([
+        { id, month: date.getUTCMonth(), day: date.getUTCDate() },
+      ]);
+      id++;
     }
-    id++;
   }
 
   const events = parseInput(input);
-  // insert events
   for (const event of events) {
     const m = Math.floor((event.end - event.start) / 2) + event.start;
-    console.log(m);
-    for (let i = event.start; i < event.end; i++) {
-      timeline[i].push({
+    const offset = (event.end - event.start) % 2 === 0;
+    for (let i = event.start; i <= event.end; i++) {
+      timeline[i - 1].push({
         text: i === m ? event.text : "",
+        offset,
         start: i === event.start,
-        end: i === event.end - 1,
+        end: i === event.end,
       });
     }
   }
 
+  const emptySpacesInFront = 2;
+
+  const emptiesDays = Array(emptySpacesInFront)
+    .fill(null)
+    .map((_) => <Empty />);
+  emptiesDays.pop();
+  emptiesDays.push(<Year />);
+
+  const emptiesEvents = Array(emptySpacesInFront)
+    .fill(null)
+    .map((_) => <Empty hidden />);
+
   return (
     <div className="wrapper">
       <div className="calendar">
-        <Year />
+        {emptiesDays}
         {timeline.map(([{ id, month, day }]) => (
-          <Day key={id} month={month} day={day} />
+          <Day key={`${id} `} month={month} day={day} />
         ))}
-        <Empty />
       </div>
       <div className="calendar-events">
-        <Empty hidden />
+        {emptiesEvents}
         {timeline.map(([_, event]) =>
-          event ? <Event {...event} /> : <Empty hidden />
+          event ? (
+            <Event key={`${_.id} `} {...event} />
+          ) : (
+            <Empty key={`${_.id}`} hidden />
+          )
         )}
-        <Empty hidden />
       </div>
     </div>
   );
