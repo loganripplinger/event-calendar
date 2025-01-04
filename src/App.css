@@ -114,7 +114,7 @@
 .line-start {
   margin-left: unset;
 }
-.line-start::before {
+.line-start::after {
   content: "";
   position: absolute;
   transform: translateY(-50%);
