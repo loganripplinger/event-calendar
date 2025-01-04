@@ -28,6 +28,25 @@
   pointer-events: none;
 }
 
+.calendar-days-passed {
+  display: grid;
+  grid-template-columns: repeat(14, 1fr);
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  top: 0;
+  left: 0;
+  pointer-events: none;
+}
+
+.day-passed {
+  align-content: center;
+  justify-content: center;
+  text-align: center;
+  font-size: 3rem;
+  color: black;
+}
+
 .year {
   font-size: 1.25rem;
   text-align: center;

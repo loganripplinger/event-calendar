@@ -5,9 +5,12 @@ import { Event } from "./Components/Event";
 import {
   createTimelineWithDays,
   insertEventsIntoTimeline,
+  numDaysPassed,
   parseInput,
 } from "./Utils/utils";
 import { Year } from "./Components/Year";
+import React from "react";
+import { DayPassed } from "./Components/DayPassed";
 
 const input = `
 Japan: January 1 to January 15
@@ -42,6 +45,9 @@ function App() {
     .fill(null)
     .map(() => <Empty hidden />);
 
+  const [days] = React.useState(() => numDaysPassed())
+  const daysPassed = Array(days).fill(null).map(() => <DayPassed />)
+
   return (
     <div className="wrapper">
       <div className="calendar">
@@ -59,6 +65,10 @@ function App() {
             <Empty key={`${_.id}`} hidden />
           )
         )}
+      </div>
+      <div className="calendar-days-passed">
+        {emptiesEvents}
+        {daysPassed}
       </div>
     </div>
   );

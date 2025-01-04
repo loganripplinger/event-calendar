@@ -6,6 +6,19 @@ function daysinmonth(year: number, month: number): number {
   return new Date(year, month + 1, 0).getDate();
 }
 
+export const numDaysPassed = (): number => {
+  const now = new Date();
+  const currentYear = now.getUTCFullYear();
+  const startOfYear = new Date(Date.UTC(currentYear, 0, 1)); // January 1st in UTC
+
+  const daysPassed =
+    Math.floor(
+      (now.getTime() - startOfYear.getTime()) / (1000 * 60 * 60 * 24)
+    ) + 1;
+
+  return daysPassed - 1;
+};
+
 export const parseInput = (inputRaw: string): EventDefinition[] => {
   const inputs = inputRaw
     .trim()
