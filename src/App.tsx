@@ -2,8 +2,11 @@ import "./App.css";
 import { Day } from "./Components/Day";
 import { Empty } from "./Components/Empty";
 import { Event } from "./Components/Event";
-import { Timeline } from "./Utils/types";
-import { daysinmonth, parseInput, year } from "./Utils/utils";
+import {
+  createTimelineWithDays,
+  insertEventsIntoTimeline,
+  parseInput,
+} from "./Utils/utils";
 import { Year } from "./Components/Year";
 
 const input = `
@@ -22,34 +25,10 @@ fourasdfasdfanda: January 31 to Feburary 3
 function App() {
   // Item 1 will always be the day, items 2+ are events. right now only dealing with one event. No overlaps.
   // 0: [{day}, {events}]
-  const timeline: Timeline = [];
-
-  // create days
-  let id = 0; // id will match the index in timeline
-  for (let month = 0; month < 12; month++) {
-    const daysInMonth = daysinmonth(year, month);
-    for (let day = 1; day <= daysInMonth; day++) {
-      const date = new Date(Date.UTC(year, month, day));
-      timeline.push([
-        { id, month: date.getUTCMonth(), day: date.getUTCDate() },
-      ]);
-      id++;
-    }
-  }
+  const timeline = createTimelineWithDays();
 
   const events = parseInput(input);
-  for (const event of events) {
-    const m = Math.floor((event.end - event.start) / 2) + event.start;
-    const offset = (event.end - event.start) % 2 === 0;
-    for (let i = event.start; i <= event.end; i++) {
-      timeline[i - 1].push({
-        text: i === m ? event.text : "",
-        offset,
-        start: i === event.start,
-        end: i === event.end,
-      });
-    }
-  }
+  insertEventsIntoTimeline(timeline, events);
 
   const emptySpacesInFront = 2;
 

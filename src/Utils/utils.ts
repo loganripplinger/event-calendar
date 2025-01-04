@@ -1,8 +1,8 @@
-import { EventDefinition } from "./types";
+import { EventDefinition, Timeline } from "./types";
 
 export const year = new Date().getUTCFullYear();
 
-export function daysinmonth(year: number, month: number): number {
+function daysinmonth(year: number, month: number): number {
   return new Date(year, month + 1, 0).getDate();
 }
 
@@ -55,4 +55,38 @@ export const parseInput = (inputRaw: string): EventDefinition[] => {
   }
 
   return res;
+};
+
+export const createTimelineWithDays = (): Timeline => {
+  const timeline: Timeline = [];
+  let id = 0; // id will match the index in timeline
+  for (let month = 0; month < 12; month++) {
+    const daysInMonth = daysinmonth(year, month);
+    for (let day = 1; day <= daysInMonth; day++) {
+      const date = new Date(Date.UTC(year, month, day));
+      timeline.push([
+        { id, month: date.getUTCMonth(), day: date.getUTCDate() },
+      ]);
+      id++;
+    }
+  }
+  return timeline;
+};
+
+export const insertEventsIntoTimeline = (
+  timeline: Timeline,
+  events: EventDefinition[]
+) => {
+  for (const event of events) {
+    const m = Math.floor((event.end - event.start) / 2) + event.start;
+    const offset = (event.end - event.start) % 2 === 0;
+    for (let i = event.start; i <= event.end; i++) {
+      timeline[i - 1].push({
+        text: i === m ? event.text : "",
+        offset,
+        start: i === event.start,
+        end: i === event.end,
+      });
+    }
+  }
 };
