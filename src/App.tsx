@@ -24,10 +24,37 @@ two lines: Feb 8 to Feb 23
 fourasdfasdfanda: January 31 to Feburary 3
 `;
 
+const setTextToUrl = (text: string) => {
+  const params = new URLSearchParams(window.location.search);
+  params.set("text", encodeURIComponent(text));
+  const newURL = `${window.location.pathname}?${params.toString()}`;
+  window.history.replaceState(null, "", newURL);
+};
 
 function App() {
-  const [showInput, setShowInput] = React.useState(false)
-  const [input, setInput] = React.useState(defaultInput)
+  const [showInput, setShowInput] = React.useState(false);
+  const [input, setInput] = React.useState("");
+
+  const handleChange: React.ChangeEventHandler<HTMLTextAreaElement> = (e) => {
+    const newValue = e.target.value;
+    setInput(newValue);
+    setTextToUrl(newValue);
+  };
+
+  React.useEffect(() => {
+    const getInitState = () => {
+      const params = new URLSearchParams(window.location.search);
+      const initalValue = params.get("text");
+      if (initalValue) setInput(decodeURIComponent(initalValue));
+      return initalValue;
+    };
+
+    const initState = getInitState();
+    if (!initState) {
+      setTextToUrl(defaultInput);
+      getInitState();
+    }
+  }, []);
 
   // Item 1 will always be the day, items 2+ are events. right now only dealing with one event. No overlaps.
   // 0: [{day}, {events}]
@@ -37,7 +64,7 @@ function App() {
     const events = parseInput(input);
     insertEventsIntoTimeline(timeline, events);
   } catch (e) {
-    console.error(e)
+    console.error(e);
   }
   const emptySpacesInFront = 2;
 
@@ -51,8 +78,10 @@ function App() {
     .fill(null)
     .map(() => <Empty hidden />);
 
-  const [days] = React.useState(() => numDaysPassed())
-  const daysPassed = Array(days).fill(null).map(() => <DayPassed />)
+  const [days] = React.useState(() => numDaysPassed());
+  const daysPassed = Array(days)
+    .fill(null)
+    .map(() => <DayPassed />);
 
   return (
     <>
@@ -78,8 +107,10 @@ function App() {
           {daysPassed}
         </div>
       </div>
-      <button onClick={() => setShowInput(b => !b)}>Toggle input</button>
-      {showInput && <textarea className="input" value={input} onChange={e => setInput(e.target.value)} />}
+      <button onClick={() => setShowInput((b) => !b)}>Toggle input</button>
+      {showInput && (
+        <textarea className="input" value={input} onChange={handleChange} />
+      )}
     </>
   );
 }
