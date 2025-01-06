@@ -107,7 +107,9 @@ function App() {
           {daysPassed}
         </div>
       </div>
-      <button onClick={() => setShowInput((b) => !b)}>Toggle input</button>
+      <button onClick={() => setShowInput((prev) => !prev)}>
+        Toggle input
+      </button>
       {showInput && (
         <textarea className="input" value={input} onChange={handleChange} />
       )}
