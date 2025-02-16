@@ -107,6 +107,10 @@ function App() {
           {daysPassed}
         </div>
       </div>
+      <p>
+        How to use: This app encodes your data into the URL. Input events, save
+        the URL, and reopen it to view your calendar.
+      </p>
       <button onClick={() => setShowInput((prev) => !prev)}>
         Toggle input
       </button>
