@@ -12,17 +12,29 @@ import { Year } from "./Components/Year";
 import React from "react";
 import { DayPassed } from "./Components/DayPassed";
 
-const defaultInput = `Japan: January 1 to January 15
-DayLight bug free: March 4 to March 11
-one: Apr 1 to April 1
-two: Apr 15 to April 16
-three: Apr 28 to April 30
-four: may 11 to may 14
-fourasdfasdfanda: may 25 to may 28 
-between months: August 31 to September 4
-two lines: Feb 8 to Feb 23
-fourasdfasdfanda: January 31 to Feburary 3
+const defaultInput = `## Example Trips
+Aspen: Jan 5 to Jan 10
+New Orleans: Feb 8 to Feb 12  
+Sedona: Mar 20 to Mar 25  
+Tokyo: Apr 5 to Apr 15  
+Yellowstone: May 10 to May 15  
+Maui: Jun 1 to Jun 7  
+Banff: Jul 18 to Jul 25  
+Barcelona: Aug 10 to Aug 20  
+New York City: Sep 3 to Sep 7
+Rome: Oct 14 to Oct 22  
+Chicago: Nov 3 to Nov 7  
+Sydney: Dec 1 to Dec 10
 `;
+
+// const _testingInput = `Japan: January 1 to January 15
+// Daylight Savings: March 4 to March 11
+// One Day: Apr 1 to April 1
+// Two Days: Apr 15 to April 16
+// Three Days: Apr 28 to April 30
+// Four Days: may 11 to may 14
+// Between Months: August 31 to September 4
+// Two Weeks: Feb 8 to Feb 23`;
 
 const setTextToUrl = (text: string) => {
   const params = new URLSearchParams(window.location.search);
