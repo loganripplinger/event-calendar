@@ -104,6 +104,10 @@ function App() {
             <Day key={`${id} `} month={month} day={day} />
           ))}
         </div>
+        <div className="calendar-days-passed">
+          {emptiesEvents}
+          {daysPassed}
+        </div>
         <div className="calendar-events">
           {emptiesEvents}
           {timeline.map(([_, event]) =>
@@ -113,10 +117,6 @@ function App() {
               <Empty key={`${_.id}`} hidden />
             )
           )}
-        </div>
-        <div className="calendar-days-passed">
-          {emptiesEvents}
-          {daysPassed}
         </div>
       </div>
       <p>
